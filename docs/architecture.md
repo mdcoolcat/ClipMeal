@@ -2,7 +2,7 @@
 
 ## Overview
 
-ClipMeal is an AI-powered recipe extraction system. Users paste a URL from YouTube, TikTok, Instagram, or any recipe website, and ClipMeal extracts a structured recipe (title, ingredients, steps) using a multi-strategy pipeline.
+ClipMeal is an AI-powered recipe extraction system. Users paste a URL from YouTube, TikTok, Instagram, or any recipe website, and ClipMeal extracts a structured recipe (title, ingredients, steps) using a multi-strategy pipeline powered by Google Gemini.
 
 ---
 
@@ -14,7 +14,7 @@ ClipMeal is an AI-powered recipe extraction system. Users paste a URL from YouTu
 │                     │       │   recipe-keeper-api.onrender.com     │
 │  Share Extension    │       └────────────────┬─────────────────────┘
 │  Core Data          │                        │
-│  StoreKit           │                        │  POST /api/extract-recipe
+│  StoreKit 2         │                        │  POST /api/extract-recipe
 └──────────┬──────────┘                        │
            │  REST API                         │
            └───────────────┬───────────────────┘
@@ -30,17 +30,16 @@ ClipMeal is an AI-powered recipe extraction system. Users paste a URL from YouTu
            │  │  2. Cache Lookup (Redis)    │  │
            │  │  3. Metadata Extraction     │  │
            │  │  4. Text → Gemini           │  │
-           │  │  5. Bio/Profile Scraping    │  │
-           │  │  6. Video → Gemini          │  │
+           │  │  5. Video → Gemini          │  │
            │  └──────────────┬──────────────┘  │
            └─────────────────┼─────────────────┘
                              │
-          ┌──────────────────┼──────────────────┐
-          │                  │                  │
-   ┌──────▼──────┐  ┌───────▼──────┐  ┌────────▼────────┐
-   │  Gemini 2.0 │  │  Redis Cloud │  │  yt-dlp /       │
-   │  Flash API  │  │  (24h cache) │  │  curl_cffi      │
-   └─────────────┘  └──────────────┘  └─────────────────┘
+              ┌──────────────┴──────────────┐
+              │                             │
+       ┌──────▼──────┐             ┌────────▼────────┐
+       │  Gemini 2.0 │             │  Redis Cloud     │
+       │  Flash API  │             │  (24h cache)     │
+       └─────────────┘             └─────────────────┘
 ```
 
 ---
@@ -50,32 +49,25 @@ ClipMeal is an AI-powered recipe extraction system. Users paste a URL from YouTu
 The backend uses a **cascading strategy** — each step is only attempted if the previous one didn't yield a recipe. This minimizes API costs and latency.
 
 ### Step 1 — Platform Detection
-`platform_detector.py` inspects the URL to identify: `youtube`, `tiktok`, `instagram`, or `website`.
+Inspects the URL to identify: `youtube`, `tiktok`, `instagram`, or `website`.
 
 ### Step 2 — Cache Lookup
-URLs are normalized (e.g., stripping tracking params) via `url_normalizer.py`, then hashed. The hash is looked up in a two-tier cache:
+URLs are normalized (tracking params stripped, short URLs expanded) then hashed. The hash is looked up in a two-tier cache:
 - **L1**: In-memory LRU cache (fast, per-instance)
 - **L2**: Redis Cloud (shared across instances, 24h TTL)
 
-### Step 3 — Website Extraction (recipe websites only)
-`web_scraper.py` uses `recipe-scrapers` (which understands 500+ recipe website schemas) and falls back to JSON-LD schema.org parsing via `schema_extractor.py`, then heuristic HTML parsing via `heuristic_parser.py`.
+### Step 3 — Video Metadata Extraction
+Fetches video title, description, author, top comments, and thumbnail URL from the platform.
 
-### Step 4 — Video Metadata Extraction
-`video_processor.py` uses `yt-dlp` and `curl_cffi` (for Cloudflare-protected sites) to fetch:
-- Video title, description, author
-- Top comments (uploader comments only)
-- Thumbnail URL
+### Step 4 — Text Extraction via Gemini
+If the description or an uploader comment contains recipe text, it's sent to **Gemini 2.0 Flash** with a structured prompt requesting JSON output (title, ingredients, steps, language).
 
-### Step 5 — Text Extraction via Gemini
-If the description or an uploader comment contains recipe text, `recipe_extractor.py` sends it to **Gemini 2.0 Flash** with a structured prompt requesting JSON output (title, ingredients, steps, language).
+TikTok descriptions get special handling — the caption and hashtags are parsed separately, and Gemini generates a proper recipe title from the hashtag context rather than using the raw caption.
 
-This handles recipes in any language — the prompt explicitly instructs the model not to translate.
+The prompt explicitly instructs the model **not to translate** — a Korean recipe stays in Korean, a Chinese recipe stays in Chinese.
 
-### Step 6 — Bio/Profile Link Detection
-`bio_detector.py` detects phrases like "recipe in bio" or "link in description". If found, platform-specific scrapers (`youtube_profile_scraper.py`, `tiktok_profile_scraper.py`, `instagram_profile_scraper.py`) fetch the creator's profile and extract their linked website, which is then scraped for the full recipe.
-
-### Step 7 — Video Analysis via Gemini (fallback)
-If no recipe was found in text, the video is downloaded and uploaded to Gemini's Files API for multimodal analysis — reading on-screen text, spoken ingredients, and visual cues.
+### Step 5 — Video Analysis via Gemini (fallback)
+If no recipe was found in text, the video is downloaded and uploaded to Gemini's Files API for multimodal analysis — reading on-screen text overlays, spoken ingredients, and visual cues.
 
 ---
 
@@ -102,8 +94,8 @@ RecipeKeeper (iOS)
 **Key design decisions:**
 - **Repository pattern** — `RecipeRepository` abstracts Core Data from ViewModels
 - **Observable macro** — uses Swift 5.9 `@Observable` for reactive state (not `ObservableObject`)
-- **Share Extension** — users can share a video URL from any app directly into ClipMeal
-- **StoreKit 2** — uses `PurchaseAction` environment value for testability, `@Observable` `SubscriptionManager`
+- **Share Extension** — users can share any video URL from any app directly into ClipMeal
+- **StoreKit 2** — uses `PurchaseAction` environment value for testability
 
 ---
 
@@ -149,8 +141,5 @@ RecipeKeeper (iOS)
 | iOS App | Swift, SwiftUI, Core Data, StoreKit 2 |
 | Backend | Python 3.12, FastAPI, Pydantic |
 | AI | Google Gemini 2.0 Flash (text + multimodal) |
-| Video | yt-dlp, curl_cffi (Cloudflare bypass) |
-| Recipe sites | recipe-scrapers, BeautifulSoup, JSON-LD |
 | Cache | Redis Cloud + in-memory LRU |
-| Hosting | Render (Docker), free tier |
-| Monitoring | Render health checks on `/api/health` |
+| Hosting | Render (Docker) |
