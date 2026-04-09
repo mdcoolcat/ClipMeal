@@ -1,0 +1,141 @@
+name: RecipeKeeper
+
+options:
+  bundleIdPrefix: com.recipekeeper
+  deploymentTarget:
+    iOS: 17.0
+  developmentLanguage: en
+  createIntermediateGroups: true
+  usesTabs: false
+  indentWidth: 4
+
+settings:
+  base:
+    SWIFT_VERSION: 5.9
+    DEVELOPMENT_TEAM: ""
+    IPHONEOS_DEPLOYMENT_TARGET: 17.0
+
+targets:
+  RecipeKeeper:
+    type: application
+    platform: iOS
+    deploymentTarget: 17.0
+    sources:
+      - path: RecipeKeeper
+      - path: Shared
+        excludes:
+          - AppIconImage.png
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bcui.clipcook
+        PRODUCT_NAME: RecipeKeeper
+        INFOPLIST_FILE: RecipeKeeper/Info.plist
+        CODE_SIGN_ENTITLEMENTS: RecipeKeeper/RecipeKeeper.entitlements
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - target: RecipeShareExtension
+        embed: true
+    info:
+      path: RecipeKeeper/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleDisplayName: ClipMeal
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: APPL
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        CFBundleURLTypes:
+          - CFBundleURLName: com.bcui.clipcook
+            CFBundleURLSchemes:
+              - clipmeal
+        LSRequiresIPhoneOS: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        UIApplicationSupportsIndirectInputEvents: true
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+
+  RecipeShareExtension:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: 17.0
+    sources:
+      - path: RecipeShareExtension
+      - path: Shared
+        excludes:
+          - AppIconImage.png
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bcui.clipcook.shareextension
+        PRODUCT_NAME: RecipeShareExtension
+        INFOPLIST_FILE: RecipeShareExtension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: RecipeShareExtension/RecipeShareExtension.entitlements
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: RecipeShareExtension/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleDisplayName: ClipMeal
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: XPC!
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsText: true
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+
+  RecipeKeeperTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: 17.0
+    sources:
+      - path: RecipeKeeperTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.recipekeeper.RecipeKeeperTests
+        PRODUCT_NAME: RecipeKeeperTests
+        SWIFT_VERSION: 5.9
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: RecipeKeeper
+
+schemes:
+  RecipeKeeper:
+    build:
+      targets:
+        RecipeKeeper: all
+    run:
+      config: Debug
+      # storeKitConfiguration: RecipeKeeper/RecipeKeeper.storekit  # TODO: Uncomment after creating .storekit file via Xcode GUI
+    test:
+      config: Debug
+      # storeKitConfiguration: RecipeKeeper/RecipeKeeper.storekit  # TODO: Uncomment after creating .storekit file via Xcode GUI
+      targets:
+        - RecipeKeeperTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

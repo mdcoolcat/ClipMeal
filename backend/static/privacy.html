@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipMeal - Privacy Policy</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: #fafafa;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        h1 img { width: 32px; height: 32px; border-radius: 6px; }
+        .updated { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+        h2 { font-size: 1.15rem; margin-top: 1.8rem; margin-bottom: 0.5rem; }
+        p, li { font-size: 0.95rem; color: #444; }
+        p { margin-bottom: 0.8rem; }
+        ul { padding-left: 1.5rem; margin-bottom: 0.8rem; }
+        li { margin-bottom: 0.3rem; }
+        a { color: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <img src="/static/favicon.png" alt="ClipMeal">
+            ClipMeal Privacy Policy
+        </h1>
+        <p class="updated">Last updated: March 1, 2026</p>
+
+        <p>ClipMeal ("the App") is a recipe extraction tool that helps you save recipes from videos and websites. Your privacy matters to us. This policy explains what data the App processes and how it is handled.</p>
+
+        <h2>1. Data We Process</h2>
+        <p>When you submit a URL to extract a recipe, the App processes:</p>
+        <ul>
+            <li>The URL you provide (video or website link)</li>
+            <li>Publicly available content at that URL (page text, video metadata, thumbnails)</li>
+        </ul>
+        <p>This data is used solely to extract and return a structured recipe to you.</p>
+
+        <h2>2. Data We Do Not Collect</h2>
+        <p>The App does not collect, store, or track:</p>
+        <ul>
+            <li>Personal information (name, email, phone number)</li>
+            <li>User accounts or login credentials</li>
+            <li>Device identifiers or IP addresses</li>
+            <li>Location data</li>
+            <li>Usage analytics or behavioral tracking</li>
+            <li>Cookies or browser fingerprints</li>
+        </ul>
+
+        <h2>3. Caching</h2>
+        <p>Extracted recipes may be cached for up to 24 hours to improve performance. Cache entries are keyed by a one-way hash of the URL (not the URL itself) and contain only the extracted recipe data. Cached data is automatically deleted after expiration.</p>
+
+        <h2>4. Temporary Files</h2>
+        <p>Video content may be temporarily downloaded to the server for processing. All temporary files are automatically deleted immediately after recipe extraction is complete.</p>
+
+        <h2>5. Third-Party Services</h2>
+        <p>The App uses the following third-party services to process recipes:</p>
+        <ul>
+            <li><strong>Google Gemini API</strong> &mdash; Analyzes video and text content to extract recipe information. Subject to <a href="https://policies.google.com/privacy">Google's Privacy Policy</a>.</li>
+            <li><strong>Render</strong> &mdash; Cloud hosting provider. Subject to <a href="https://render.com/privacy">Render's Privacy Policy</a>.</li>
+            <li><strong>Redis Cloud</strong> &mdash; Used for temporary recipe caching. No personal data is stored.</li>
+        </ul>
+
+        <h2>6. Data Stored on Your Device</h2>
+        <p>Recipes you save are stored locally on your device using Apple's on-device storage. This data never leaves your device unless you choose to share it. The App does not sync data to any external server.</p>
+
+        <h2>7. Children's Privacy</h2>
+        <p>The App does not knowingly collect any personal information from children under 13. Since the App does not collect personal information from any user, no special provisions are required.</p>
+
+        <h2>8. Changes to This Policy</h2>
+        <p>We may update this policy from time to time. Changes will be reflected on this page with an updated date.</p>
+
+        <h2>9. Contact</h2>
+        <p>If you have questions about this privacy policy, please <a href="mailto:danielle.mei.work@gmail.com">contact us</a>.</p>
+    </div>
+</body>
+</html>
