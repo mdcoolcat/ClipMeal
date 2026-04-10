@@ -5,13 +5,13 @@
 Paste a YouTube, TikTok, Instagram, or recipe website URL — ClipMeal extracts the structured recipe for you in seconds.
 
 [![Download on the App Store](https://img.shields.io/badge/App_Store-Download-black?logo=apple&logoColor=white)](https://apps.apple.com/us/app/clipmeal/id6758823828)
-[![Web App](https://img.shields.io/badge/Web_App-Live-6366f1)](https://recipe-keeper-api-8cxl.onrender.com/)
+[![Web App](https://img.shields.io/badge/Web_App-Live-6366f1)](https://api.clipmeal.com/)
 
 ---
 
 ## Live Demo
 
-**Web app:** [recipe-keeper-api-8cxl.onrender.com](https://recipe-keeper-api-8cxl.onrender.com/)
+**Web app:** [api.clipmeal.com](https://api.clipmeal.com/)
 
 **iOS app:** [Download on the App Store](https://apps.apple.com/us/app/clipmeal/id6758823828)
 
